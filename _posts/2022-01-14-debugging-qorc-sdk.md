@@ -45,9 +45,7 @@ Before we go on to the VSCode Setup, we would need to setup the QORC SDK, and th
 
 ## QORC SDK
 
-The recommended way to use the QORC SDK painlessly is to just let the `envsetup.sh` do the heavy lifting and install all the tools needed for build locally, within the QORC SDK directory itself.
-
-https://github.com/QuickLogic-Corp/qorc-sdk/blob/master/quickstart.rst#automated-setup
+The recommended way to use the QORC SDK painlessly, is to just let the `envsetup.sh` do the heavy lifting and install all the tools needed for build locally, within the QORC SDK directory itself: [QORC SDK automated-setup](https://github.com/QuickLogic-Corp/qorc-sdk/blob/master/quickstart.rst#automated-setup)
 
 ## gdb
 
@@ -55,6 +53,9 @@ This is a part of the ARM toolchain for Cortex-M processors, and should already 
 
 Check by running this from QORC SDK directory, after `envsetup.sh` is sourced:
 ```
+$ which arm-none-eabi-gdb
+arm_toolchain_install/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gdb
+
 $ arm-none-eabi-gdb --version
 GNU gdb (GNU Arm Embedded Toolchain 9-2020-q2-update) 8.3.1.20191211-git
 Copyright (C) 2019 Free Software Foundation, Inc.
