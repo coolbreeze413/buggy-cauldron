@@ -153,9 +153,7 @@ The Eclipse approach is bit cumbersome to setup one time, but simple enough to u
 <h2 id="qorc-sdk">
 <a class="anchor" href="#qorc-sdk" aria-hidden="true"><span class="octicon octicon-link"></span></a>QORC SDK</h2>
 
-<p>The recommended way to use the QORC SDK painlessly is to just let the <code class="language-plaintext highlighter-rouge">envsetup.sh</code> do the heavy lifting and install all the tools needed for build locally, within the QORC SDK directory itself.</p>
-
-<p>https://github.com/QuickLogic-Corp/qorc-sdk/blob/master/quickstart.rst#automated-setup</p>
+<p>The recommended way to use the QORC SDK painlessly, is to just let the <code class="language-plaintext highlighter-rouge">envsetup.sh</code> do the heavy lifting and install all the tools needed for build locally, within the QORC SDK directory itself: <a href="https://github.com/QuickLogic-Corp/qorc-sdk/blob/master/quickstart.rst#automated-setup">QORC SDK automated-setup</a></p>
 
 <h2 id="gdb">
 <a class="anchor" href="#gdb" aria-hidden="true"><span class="octicon octicon-link"></span></a>gdb</h2>
@@ -163,7 +161,10 @@ The Eclipse approach is bit cumbersome to setup one time, but simple enough to u
 <p>This is a part of the ARM toolchain for Cortex-M processors, and should already be setup when we source the <code class="language-plaintext highlighter-rouge">envsetup.sh</code> from the root of the QORC SDK.</p>
 
 <p>Check by running this from QORC SDK directory, after <code class="language-plaintext highlighter-rouge">envsetup.sh</code> is sourced:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ arm-none-eabi-gdb --version
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ which arm-none-eabi-gdb
+arm_toolchain_install/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-gdb
+
+$ arm-none-eabi-gdb --version
 GNU gdb (GNU Arm Embedded Toolchain 9-2020-q2-update) 8.3.1.20191211-git
 Copyright (C) 2019 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
