@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Debugging With the qorc-sdk | buggy-cauldron</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Debugging With the qorc-sdk" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How to debug qorc-sdk based code on the EOS-S3" />
+<meta property="og:description" content="How to debug qorc-sdk based code on the EOS-S3" />
+<link rel="canonical" href="https://coolbreeze413.github.io/buggy-cauldron/debugging/eoss3/qorc-sdk/2022/01/14/debugging-qorc-sdk.html" />
+<meta property="og:url" content="https://coolbreeze413.github.io/buggy-cauldron/debugging/eoss3/qorc-sdk/2022/01/14/debugging-qorc-sdk.html" />
+<meta property="og:site_name" content="buggy-cauldron" />
+<meta property="og:image" content="https://coolbreeze413.github.io/buggy-cauldron/images/homepage_callout_qorc.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-01-14T00:00:00-06:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://coolbreeze413.github.io/buggy-cauldron/images/homepage_callout_qorc.jpg" />
+<meta property="twitter:title" content="Debugging With the qorc-sdk" />
+<script type="application/ld+json">
+{"url":"https://coolbreeze413.github.io/buggy-cauldron/debugging/eoss3/qorc-sdk/2022/01/14/debugging-qorc-sdk.html","@type":"BlogPosting","headline":"Debugging With the qorc-sdk","dateModified":"2022-01-14T00:00:00-06:00","datePublished":"2022-01-14T00:00:00-06:00","image":"https://coolbreeze413.github.io/buggy-cauldron/images/homepage_callout_qorc.jpg","mainEntityOfPage":{"@type":"WebPage","@id":"https://coolbreeze413.github.io/buggy-cauldron/debugging/eoss3/qorc-sdk/2022/01/14/debugging-qorc-sdk.html"},"description":"How to debug qorc-sdk based code on the EOS-S3","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/buggy-cauldron/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://coolbreeze413.github.io/buggy-cauldron/feed.xml" title="buggy-cauldron" /><link rel="shortcut icon" type="image/x-icon" href="/buggy-cauldron/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/buggy-cauldron/">buggy-cauldron</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/buggy-cauldron/about/">About Me</a><a class="page-link" href="/buggy-cauldron/search/">Search</a><a class="page-link" href="/buggy-cauldron/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Debugging With the qorc-sdk</h1><p class="page-description">How to debug qorc-sdk based code on the EOS-S3</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-01-14T00:00:00-06:00" itemprop="datePublished">
+        Jan 14, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      2 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/buggy-cauldron/categories/#debugging">debugging</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/buggy-cauldron/categories/#eoss3">eoss3</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/buggy-cauldron/categories/#qorc-sdk">qorc-sdk</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h1"><a href="#debugging-with-the-qorc-sdk">Debugging with the QORC SDK</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#qorc-sdk">QORC SDK</a></li>
+<li class="toc-entry toc-h2"><a href="#gdb">gdb</a></li>
+<li class="toc-entry toc-h2"><a href="#openocd">OpenOCD</a></li>
+<li class="toc-entry toc-h2"><a href="#jlink">JLink</a></li>
+<li class="toc-entry toc-h2"><a href="#pyocd">pyOCD</a></li>
+<li class="toc-entry toc-h2"><a href="#vscode-setup">VSCode Setup</a></li>
+</ul>
+</li>
+</ul><h1 id="debugging-with-the-qorc-sdk">
+<a class="anchor" href="#debugging-with-the-qorc-sdk" aria-hidden="true"><span class="octicon octicon-link"></span></a>Debugging with the QORC SDK</h1>
+
+<p>There are 2 (interconnected) parts to debugging the code on the EOS-S3 with the QORC SDK:</p>
+
+<ul>
+  <li>The Debugging Software Tools</li>
+  <li>The Debug Probe</li>
+</ul>
+
+<p>The choice of the debugging software tools influences what debug probe you can use.
+The EOS-S3 being a Cortex-M4F based MCU, has a wide variety of options to choose from for the software tools, below is a list of option combinations:</p>
+
+<ol>
+  <li>JLink + Jlink Probes (JLink EDU / JLink EDU Mini / JLink BASE …)</li>
+  <li>OpenOCD + SWD Probes (FT2232H-based probes, STLINK-v2 probes, JLink Probes…)</li>
+  <li>pyOCD + SWD Probes (CMSIS-DAP, JLink, STLINK-v2, picoprobe…)</li>
+</ol>
+
+<p>There is another part of the debugging setup: the code environment.<br>
+This largely depends on personal choices, such as:</p>
+<ol>
+  <li>use Vi/EMACS for code, and Commanline for build/debug/flash</li>
+  <li>use Eclipse-EmbedCDT for everything</li>
+  <li>Use VSCode for everything</li>
+</ol>
+
+<p>In this post, I will focus on using VSCode for everything as I personally prefer this approach currently.</p>
+
+<p>For Eclipse-EmbedCDT, there is already official docs which cover this to some extent: https://github.com/QuickLogic-Corp/qorc-sdk/blob/master/using_eclipse.rst<br>
+The Eclipse approach is bit cumbersome to setup one time, but simple enough to use after that.</p>
+
+<p>The Vi/Emacs/Commandline users are generally well versed in setting up specific personal configurations for use, and I will leave this out of the discussions.</p>
+
+<p>Before we go on to the VSCode Setup, we would need to setup the QORC SDK, and the debug software tools.</p>
+
+<h2 id="qorc-sdk">
+<a class="anchor" href="#qorc-sdk" aria-hidden="true"><span class="octicon octicon-link"></span></a>QORC SDK</h2>
+
+<p>The recommended way to use the QORC SDK painlessly is to just let the <code class="language-plaintext highlighter-rouge">envsetup.sh</code> do the heavy lifting and install all the tools needed for build locally, within the QORC SDK directory itself.</p>
+
+<p>https://github.com/QuickLogic-Corp/qorc-sdk/blob/master/quickstart.rst#automated-setup</p>
+
+<h2 id="gdb">
+<a class="anchor" href="#gdb" aria-hidden="true"><span class="octicon octicon-link"></span></a>gdb</h2>
+
+<p>This is a part of the ARM toolchain for Cortex-M processors, and should already be setup when we source the <code class="language-plaintext highlighter-rouge">envsetup.sh</code> from the root of the QORC SDK.</p>
+
+<p>Check by running this from QORC SDK directory, after <code class="language-plaintext highlighter-rouge">envsetup.sh</code> is sourced:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ arm-none-eabi-gdb --version
+GNU gdb (GNU Arm Embedded Toolchain 9-2020-q2-update) 8.3.1.20191211-git
+Copyright (C) 2019 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+</code></pre></div></div>
+
+<h2 id="openocd">
+<a class="anchor" href="#openocd" aria-hidden="true"><span class="octicon octicon-link"></span></a>OpenOCD</h2>
+<div class="Toast">
+   <span class="Toast-icon"><svg class="octicon octicon-info" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg></span>
+   <span class="Toast-content">TODO</span>
+</div>
+
+<h2 id="jlink">
+<a class="anchor" href="#jlink" aria-hidden="true"><span class="octicon octicon-link"></span></a>JLink</h2>
+<div class="Toast">
+   <span class="Toast-icon"><svg class="octicon octicon-info" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg></span>
+   <span class="Toast-content">TODO</span>
+</div>
+
+<h2 id="pyocd">
+<a class="anchor" href="#pyocd" aria-hidden="true"><span class="octicon octicon-link"></span></a>pyOCD</h2>
+<div class="Toast">
+   <span class="Toast-icon"><svg class="octicon octicon-info" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg></span>
+   <span class="Toast-content">TODO</span>
+</div>
+
+<h2 id="vscode-setup">
+<a class="anchor" href="#vscode-setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>VSCode Setup</h2>
+
+<p>I have 4 parts of the setup for using VSCode with any embedded project, which applies to QORC SDK as well:</p>
+
+<ul>
+  <li>settings.json
+    <blockquote>
+      <p>Define setting specific to the project</p>
+    </blockquote>
+  </li>
+  <li>tasks.json
+    <blockquote>
+      <p>Define build/clean tasks</p>
+    </blockquote>
+  </li>
+  <li>c_cpp_properties.json
+    <blockquote>
+      <p>Define intellisense config</p>
+    </blockquote>
+  </li>
+  <li>launch.json
+    <blockquote>
+      <p>Define debugging config(s)</p>
+    </blockquote>
+  </li>
+</ul>
+
+<div class="Toast">
+   <span class="Toast-icon"><svg class="octicon octicon-info" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg></span>
+   <span class="Toast-content">TODO</span>
+</div>
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="coolbreeze413/buggy-cauldron"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/buggy-cauldron/debugging/eoss3/qorc-sdk/2022/01/14/debugging-qorc-sdk.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/buggy-cauldron/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/buggy-cauldron/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/buggy-cauldron/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>A mix of mistletoe, black gold, cucmbers, garlic, salt for the taste, and a few bugs for the bite </p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/coolbreeze413" target="_blank" title="coolbreeze413"><svg class="svg-icon grey"><use xlink:href="/buggy-cauldron/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/coolbreeze413" target="_blank" title="coolbreeze413"><svg class="svg-icon grey"><use xlink:href="/buggy-cauldron/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
